@@ -1,0 +1,52 @@
+{
+  "skill": "power-accident-reporting",
+  "version": "0.1.0",
+  "source_book": "《电力安全事故应急处置和调查处理条例》— 国务院令第599号公布·第845号修订",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "变电站出事故了，现场运行人员第一报应该报给谁？",
+      "expected_behavior": "应激活 power-accident-reporting，说明现场人员应立即报发电厂/变电站值班、调度值班或现场负责人，并给出后续逐级上行路径。",
+      "notes": "正面场景：明确问'第一报给谁'，属报告链。"
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "事故报告里必须写哪些内容？能不能先报已知情况后面再补？",
+      "expected_behavior": "应激活本 skill，列出第10条五要素，并说明可先报已知、后报详细、新情况及时补报。",
+      "notes": "正面场景：问报告内容与补报规则。"
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "我们热电厂出了事故还影响了供热，除了派出机构还要报哪个部门？",
+      "expected_behavior": "应激活本 skill，指出热电厂影响供热应加报供热管理部门（第8条）。",
+      "notes": "正面场景：加报分支识别。"
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "这起事故减供负荷 40%，应该算重大还是特别重大？",
+      "expected_behavior": "不应激活本 skill，应激活 power-accident-grade-classify（定级）。",
+      "notes": "诱饵：问等级而非报告动作。"
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "一般事故由哪个机构来组织调查？",
+      "expected_behavior": "不应激活本 skill，应激活 power-accident-investigation（调查管辖权限矩阵）。",
+      "notes": "跨 skill 混淆诱饵：问'谁调查'不是'怎么报告'。"
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "事故造成供电用户停电，派出机构接报后除了上报还要做什么？",
+      "expected_behavior": "应激活本 skill 并提示：派出机构接报应立即核实、向能源主管部门报告，且造成用户停电时应同时通报事故发生地县级以上地方政府（第9条）。",
+      "notes": "边界：涉及派出机构对地方政府的通报义务，属报告流程延伸。"
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 should_trigger + 2 should_not_trigger（含 1 条跨 skill 兄弟 skill 诱饵）+ 1 edge_case。"
+}

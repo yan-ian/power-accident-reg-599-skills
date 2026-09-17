@@ -1,0 +1,52 @@
+{
+  "skill": "power-accident-emergency-response",
+  "version": "0.1.0",
+  "source_book": "《电力安全事故应急处置和调查处理条例》— 国务院令第599号公布·第845号修订",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "电网故障快撑不住了，调度机构能不能直接拉限负荷、解列电网？",
+      "expected_behavior": "应激活 power-accident-emergency-response，引用第14条说明调度机构在危及稳定/大面积停电时有权拉限负荷、解列电网/机组，各方必须执行。",
+      "notes": "正面场景：问调度紧急命令权。"
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "事故后恢复供电资源有限，应该先恢复哪里？",
+      "expected_behavior": "应激活本 skill，引用第15条说明优先保重要厂用电、重要输变电设备、主干网架，再优先重要用户、重要城市、重点地区。",
+      "notes": "正面场景：问恢复优先序。"
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "发生大面积停电，地方政府要组织哪些应急处置？",
+      "expected_behavior": "应激活本 skill，列出第18条：安保重点单位、排除险情、救治转移安置、交通通信疏导、应急物资保障。",
+      "notes": "正面场景：问大面积停电政府处置。"
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "这起事故应该算较大还是一般？",
+      "expected_behavior": "不应激活本 skill，应激活 power-accident-grade-classify（定级）。",
+      "notes": "诱饵：问等级不是问处置。"
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "事故调查报告应该包含哪些内容？",
+      "expected_behavior": "不应激活本 skill，应激活 power-accident-investigation（调查报告六要素）。",
+      "notes": "跨 skill 混淆诱饵：问调查报告不是问应急处置。"
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "事故影响范围、预计恢复时间这些信息由哪个部门对外发布？",
+      "expected_behavior": "应激活本 skill 并引用第20条：由应急指挥机构、能源主管部门或派出能源监管机构统一、准确、及时发布，其他主体不得擅自发布。",
+      "notes": "边界：信息发布主体归属，属处置章延伸。"
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 should_trigger + 2 should_not_trigger（含 1 条跨 skill 兄弟 skill 诱饵）+ 1 edge_case。"
+}

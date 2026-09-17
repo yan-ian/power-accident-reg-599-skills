@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/32333687/README.md)
 # 电力安全事故应急处置和调查处理条例 · Agent Skills
 
 > 《电力安全事故应急处置和调查处理条例》（国务院令第599号公布，第845号修订）蒸馏而成的一套可执行 Agent Skills。

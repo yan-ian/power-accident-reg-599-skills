@@ -1,0 +1,52 @@
+{
+  "skill": "power-accident-grade-classify",
+  "version": "0.1.0",
+  "source_book": "《电力安全事故应急处置和调查处理条例》— 国务院令第599号公布·第845号修订",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "我们省网起始负荷 10000MW，这次事故减供了 6000MW，这算几级事故？",
+      "expected_behavior": "应激活 power-accident-grade-classify，按省网 5000–11000MW 档计算减供比例 60%，判定为特别重大事故，并说明命中维度与阈值。",
+      "notes": "正面场景：明确给了电网类型、负荷、减供量，需定量定级。"
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "按 845 号令附件，直辖市电网减供负荷 30% 属于什么等级？",
+      "expected_behavior": "应激活本 skill，查直辖市电网档：减供 20%–50% 为重大，30% 落入此区间，判定为重大事故。",
+      "notes": "正面场景：直接引用附件分级标准做定级。"
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "一座 220kV 以上变电站安全故障，导致周边 220kV 母线电压偏离标称 18%、持续 2 小时，怎么定级？",
+      "expected_behavior": "应激活本 skill，命中'影响维度'：电压偏离 15% 以上且持续 1.5h 以上 → 一般事故。",
+      "notes": "正面场景：命中非负荷维度的定级条款。"
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "事故发生后我们单位被罚了 200 万，主要负责人也被罚了上年收入的 80%，这个处罚合规吗？",
+      "expected_behavior": "不应激活本 skill，应激活 power-accident-liability-penalty（罚则矩阵）。",
+      "notes": "诱饵：问的是罚款金额合规性，属罚则 skill，非定级。"
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "特别重大事故应该由谁来组织调查？",
+      "expected_behavior": "不应激活本 skill，应激活 power-accident-investigation（调查管辖权限矩阵）。",
+      "notes": "跨 skill 混淆诱饵（硬性要求）：问'谁调查'不是'算哪级'。"
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "这次事故只造成了 3 人死亡、直接经济损失 500 万，但电网没减供、供电没中断，怎么定级？",
+      "expected_behavior": "应判定为'不适用本 skill'：未影响电力系统稳定运行与电力供应，按第35条转《生产安全事故报告和调查处理条例》定级，并建议调用对应生产安全事故流程。",
+      "notes": "边界：纯伤亡/经济损失事件，本 skill 的定级维度全部不命中，需转轨。"
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 条 should_trigger + 2 条 should_not_trigger（含 1 条跨 skill 兄弟 skill 诱饵）+ 1 条 edge_case。全部 should_not_trigger 必须通过。"
+}

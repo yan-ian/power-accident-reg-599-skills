@@ -1,0 +1,52 @@
+{
+  "skill": "power-accident-liability-penalty",
+  "version": "0.1.0",
+  "source_book": "《电力安全事故应急处置和调查处理条例》— 国务院令第599号公布·第845号修订",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "发生一般事故，责任单位要罚多少钱？",
+      "expected_behavior": "应激活 power-accident-liability-penalty，引用第29条说明一般事故单位罚 30–100 万元。",
+      "notes": "正面场景：问单位罚款区间（按等级）。"
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "单位瞒报事故、主要负责人还逃匿了，会怎么罚？",
+      "expected_behavior": "应激活本 skill，引用第28条：单位罚 100–500 万，主要及直接责任人员罚上年收入 60%–100%；若受撤职/刑罚再叠加 5 年禁任（第31条）。",
+      "notes": "正面场景：禁止行为（瞒报+逃匿）的失败模式与后果。"
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "重大事故的主要负责人按上年收入罚百分之多少？",
+      "expected_behavior": "应激活本 skill，引用第30条说明重大事故发生单位主要负责人罚上年收入 80%。",
+      "notes": "正面场景：个人年收入罚款比例。"
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "这起事故是由派出机构还是能源主管部门调查？",
+      "expected_behavior": "不应激活本 skill，应激活 power-accident-investigation（调查管辖权限矩阵）。",
+      "notes": "诱饵：问调查主体不是问罚则。"
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "减供负荷 50% 以上算什么等级？",
+      "expected_behavior": "不应激活本 skill，应激活 power-accident-grade-classify（定级）。",
+      "notes": "跨 skill 混淆诱饵：问等级不是问罚款。"
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "情节特别恶劣的特别重大事故，罚款上不封顶吗？",
+      "expected_behavior": "应激活本 skill 并引用第29条：特别重大基础 1000–2000 万，情节特别严重/影响特别恶劣可按 2–5 倍处罚（即最高 1 亿元），并非完全无上限但显著加重。",
+      "notes": "边界：加重条款的倍数上限，易误读为'无上限'。"
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 should_trigger + 2 should_not_trigger（含 1 条跨 skill 兄弟 skill 诱饵）+ 1 edge_case。"
+}

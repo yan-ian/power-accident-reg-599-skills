@@ -1,0 +1,52 @@
+{
+  "skill": "power-accident-investigation",
+  "version": "0.1.0",
+  "source_book": "《电力安全事故应急处置和调查处理条例》— 国务院令第599号公布·第845号修订",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "一起重大事故应该由谁来组织调查？",
+      "expected_behavior": "应激活 power-accident-investigation，引用第21条说明重大事故由国务院能源主管部门组织调查。",
+      "notes": "正面场景：问调查管辖主体。"
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "一般事故调查要在多少天内出报告？能延期吗？",
+      "expected_behavior": "应激活本 skill，引用第23条说明较大/一般事故期限 45 日，特殊情况经批准可延长但≤45日，自事故发生日起算。",
+      "notes": "正面场景：问调查期限与延期。"
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "事故调查报告必须包含哪些内容？",
+      "expected_behavior": "应激活本 skill，列出第24条六要素：单位情况与经过、直接损失与影响、原因性质、应急处置恢复、责任认定与处理建议、防范整改措施。",
+      "notes": "正面场景：问调查报告要素。"
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "发生特别重大事故，单位要罚多少钱？",
+      "expected_behavior": "不应激活本 skill，应激活 power-accident-liability-penalty（罚则矩阵）。",
+      "notes": "诱饵：问罚款金额不是问调查程序。"
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "这起事故减供负荷 25%，算几级？",
+      "expected_behavior": "不应激活本 skill，应激活 power-accident-grade-classify（定级）。",
+      "notes": "跨 skill 混淆诱饵：问等级不是问调查。"
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "调查批复之后，防范整改措施落实得怎么样谁来跟踪？",
+      "expected_behavior": "应激活本 skill 并引用第26条：批复后一年内，国务院能源主管部门或派出能源监管机构组织评估并公开结果。",
+      "notes": "边界：整改评估主体，属调查章末端闭环。"
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "3 should_trigger + 2 should_not_trigger（含 1 条跨 skill 兄弟 skill 诱饵）+ 1 edge_case。"
+}
